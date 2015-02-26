@@ -38,17 +38,17 @@ public class ThreadedCountRunner {
     }
 }
 
+// Shared among all threads.
 class Counter {
+    final ReentrantLock lock = new ReentrantLock();
     long count = 0;
 }
 
 abstract class CounterActor implements Runnable {
-    // This is static in order to be shared along all threads.
-    private static final ReentrantLock lock = new ReentrantLock();
     private final ComputationMode computationMode;
 
     protected Counter counter;
-    private final static int ITERATION_COUNT = 1000000;
+    private final static int ITERATION_COUNT = 100000;
 
     public CounterActor(Counter counter, ComputationMode computationMode) {
         this.counter = counter;
@@ -69,9 +69,9 @@ abstract class CounterActor implements Runnable {
                     }
                     break;
                 case REENTRANT_LOCKED:
-                    lock.lock();
+                    counter.lock.lock();
                     act();
-                    lock.unlock();
+                    counter.lock.unlock();
                     break;
             }
         }
