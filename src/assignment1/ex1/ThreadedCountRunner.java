@@ -1,6 +1,7 @@
 package assignment1.ex1;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 enum ComputationMode {NAIVE, SYNCHRONIZED, REENTRANT_LOCKED};
@@ -40,7 +41,7 @@ public class ThreadedCountRunner {
 
 // Shared among all threads.
 class Counter {
-    final ReentrantLock lock = new ReentrantLock();
+    final Lock lock = new ReentrantLock();
     long count = 0;
 }
 
