@@ -7,13 +7,11 @@ enum ComputationMode {NAIVE, SYNCHRONIZED, REENTRANT_LOCKED};
 
 public class ThreadedCountRunner {
 
-    public final ComputationMode computationMode;
+    private static final boolean verbose = false;
+    public final Counter counter;
 
     public ThreadedCountRunner(int n, int m, ComputationMode computationMode) throws InterruptedException {
-        this.computationMode = computationMode;
-        System.out.printf("Using %d incrementors and %d decrementors.\n", n, m);
-
-        Counter counter = new Counter();
+        counter = new Counter();
 
         ArrayList<Thread> threads = new ArrayList<Thread>(n + m);
         // Create incrementors.
@@ -32,7 +30,11 @@ public class ThreadedCountRunner {
         for (Thread t: threads) {
             t.join();
         }
-        System.out.println("Final value on counter: " + counter.count);
+
+        if (verbose) {
+            System.out.printf("Using %d incrementors and %d decrementors.\n", n, m);
+            System.out.println("Final value on counter: " + counter.count);
+        }
     }
 }
 
@@ -46,7 +48,7 @@ abstract class CounterActor implements Runnable {
     private final ComputationMode computationMode;
 
     protected Counter counter;
-    private final static int ITERATION_COUNT = 100000;
+    private final static int ITERATION_COUNT = 1000000;
 
     public CounterActor(Counter counter, ComputationMode computationMode) {
         this.counter = counter;
