@@ -8,10 +8,15 @@ enum ComputationMode {NAIVE, SYNCHRONIZED, REENTRANT_LOCKED};
 
 public class ThreadedCountRunner {
 
-    private static final boolean verbose = false;
+    private final boolean verbose;
     public final Counter counter;
 
     public ThreadedCountRunner(int n, int m, ComputationMode computationMode) throws InterruptedException {
+        this(n, m, computationMode, true);
+    }
+
+    public ThreadedCountRunner(int n, int m, ComputationMode computationMode, boolean verbose) throws InterruptedException {
+        this.verbose = verbose;
         counter = new Counter();
 
         ArrayList<Thread> threads = new ArrayList<Thread>(n + m);
