@@ -6,16 +6,19 @@ import java.util.ArrayList;
 
 public class Ex2Savages1 {
 
-    private static final int NR_SAVAGES = 101;
+    private static final int NR_SAVAGES = 10;
 
     public static void main(String[] args) throws InterruptedException {
         ArrayList<Thread> savageThreads = new ArrayList<Thread>(NR_SAVAGES);
+        ArrayList<Savage> savages = new ArrayList<Savage>(NR_SAVAGES);
 
         Pot pot = new Pot();
         Cook cook = new Cook(pot);
         Thread cookThread = new Thread(cook);
         for (int i = 0; i < NR_SAVAGES; i++) {
-            savageThreads.add(new Thread(new Savage(pot, cook)));
+            Savage s = new Savage(pot, cook);
+            savages.add(s);
+            savageThreads.add(new Thread(s));
         }
 
         // Start threads:
@@ -23,21 +26,27 @@ public class Ex2Savages1 {
         for (Thread t : savageThreads) {
             t.start();
         }
+        // Let them eat/cook for some time.
+        for (int i = 0; i < 10; i++) {
+            System.out.printf("Cook had to refill %d times.\n", cook.nrRefills);
+            Thread.sleep(100);
+        }
+        for (Savage s: savages) {
+            s.hungry = false;
+        }
         for (Thread t : savageThreads) {
             t.join();
         }
         // Stop cook:
         cook.quitJob();
         cookThread.join();
-
-        System.out.printf("Cook had to refill %d times.\n", cook.nrRefills);
     }
 }
 
 class Savage implements Runnable {
     private final Cook cook;
     private final Pot pot;
-    private boolean hungry;
+    boolean hungry;
 
     public Savage(Pot pot, Cook cook) {
         this.hungry = true;
@@ -56,20 +65,21 @@ class Savage implements Runnable {
     }
 
     public void eat() {
-        try {
-            pot.takePortion();
-            hungry = false;
-        } catch (PotException e) {
+        if (pot.isEmpty()) {
             cook.inform();
-            // Wait while cook is cooking.
-            while(cook.isCooking()) {}
+        } else {
+            pot.takePortion();
         }
     }
 }
 
 class Pot {
-    private final int MAX_PORTIONS = 10;
+    private final int MAX_PORTIONS = 5;
     private int portions = 0;
+
+    public boolean isEmpty() {
+        return portions == 0;
+    }
 
     public void takePortion() {
         if (portions == 0)
@@ -119,9 +129,11 @@ class Cook implements Runnable {
     public void run() {
         while (true) {
             if (doRefill) {
-                pot.fill();
-                nrRefills++;
-                doRefill = false;
+                synchronized (pot) {
+                    pot.fill();
+                    nrRefills++;
+                    doRefill = false;
+                }
             }
             if (stopRefilling)
                 break;
