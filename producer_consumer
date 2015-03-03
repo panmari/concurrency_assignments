@@ -1,0 +1,53 @@
+Dining savages can be modelled similarly!
+
+Have 3 semaphores:
+
+emptyCount -> N
+fullCount -> 0/1
+useQue -> 0/1
+
+
+with 
+P() -> Wait (try to decrement semaphore)
+V() -> Signal (increment semaphore)
+
+produce(item):
+
+emptyCount.P();
+useQueue.P();
+q.enqueue(item)
+useQueue.V();
+fullCount.V();
+
+
+
+consume():
+
+fullCount.P()
+useQueue.P()
+item <- q.dequeue()
+useQueue.V()
+emptyCount.V()
+return item;
+
+
+
+## For Dining savages.
+
+Pot is basically a semaphore with capacity N.
+
+eat():
+# Get access to pot
+lock.P()
+if pot > 0
+	pot--
+# Relese pot
+lock.V()
+
+-----------
+
+refill()
+lock.P()
+if pot == 0
+	pot <- N
+lock.V()

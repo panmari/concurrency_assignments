@@ -1,8 +1,7 @@
 package assignment1.ex2;
 
-import assignment1.ex1.ThreadedCountRunner;
-
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class Ex2Savages1 {
 
@@ -26,7 +25,7 @@ public class Ex2Savages1 {
         for (Thread t : savageThreads) {
             t.start();
         }
-        // Let them eat/cook for some time.
+        // Let them tryToEat/cook for some time.
         for (int i = 0; i < 10; i++) {
             System.out.printf("Cook had to refill %d times.\n", cook.nrRefills);
             Thread.sleep(100);
@@ -66,25 +65,36 @@ class Savage implements Runnable {
     public void run() {
         while(hungry) {
             // Only one savage may access the pot at any time.
-            synchronized (pot) {
-                eat();
-            }
+            if (tryToEat())
+                eatCount++;
         }
     }
 
-    public void eat() {
-        if (pot.isEmpty()) {
-            cook.inform();
-        } else {
-            pot.takePortion();
-            eatCount++;
+    /**
+     * @return true, if eating succeeded. False otherwise.
+     */
+    public boolean tryToEat() {
+        boolean eaten = false;
+        try {
+            pot.lock.acquire();
+            if (pot.isEmpty()) {
+                cook.inform();
+            } else {
+                pot.takePortion();
+                eaten = true;
+            }
+            pot.lock.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        return eaten;
     }
 }
 
 class Pot {
     private final int MAX_PORTIONS = 5;
     private int portions = 0;
+    Semaphore lock = new Semaphore(1);
 
     public boolean isEmpty() {
         return portions == 0;
@@ -138,10 +148,14 @@ class Cook implements Runnable {
     public void run() {
         while (true) {
             if (doRefill) {
-                synchronized (pot) {
+                try {
+                    pot.lock.acquire();
                     pot.fill();
                     nrRefills++;
                     doRefill = false;
+                    pot.lock.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             if (stopRefilling)
