@@ -16,7 +16,7 @@ public class Ex2Savages1 {
         Cook cook = new Cook(pot);
         Thread cookThread = new Thread(cook);
         for (int i = 0; i < NR_SAVAGES; i++) {
-            Savage s = new Savage(pot, cook);
+            Savage s = new Savage(pot, cook, NR_SAVAGES);
             savages.add(s);
             savageThreads.add(new Thread(s));
         }
@@ -40,15 +40,23 @@ public class Ex2Savages1 {
         // Stop cook:
         cook.quitJob();
         cookThread.join();
+
+        System.out.println("Eaten portions per savage:");
+        for (Savage s: savages) {
+            System.out.println(s.eatCount);
+        }
     }
 }
 
 class Savage implements Runnable {
     private final Cook cook;
     private final Pot pot;
+    private final int nrSavages;
+    int eatCount = 0;
     boolean hungry;
 
-    public Savage(Pot pot, Cook cook) {
+    public Savage(Pot pot, Cook cook, int nrSavages) {
+        this.nrSavages = nrSavages;
         this.hungry = true;
         this.pot = pot;
         this.cook = cook;
@@ -69,6 +77,7 @@ class Savage implements Runnable {
             cook.inform();
         } else {
             pot.takePortion();
+            eatCount++;
         }
     }
 }
