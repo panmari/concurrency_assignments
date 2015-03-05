@@ -78,7 +78,8 @@ class Savage implements Runnable {
         try {
             pot.lock.acquire();
             if (pot.isEmpty()) {
-                cook.inform();
+                if (!cook.isCooking())
+                    cook.inform();
             } else {
                 pot.takePortion();
                 eaten = true;

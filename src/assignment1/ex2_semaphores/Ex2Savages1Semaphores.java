@@ -36,7 +36,6 @@ public class Ex2Savages1Semaphores {
             t.join();
         }
         // Stop cook:
-        cook.quitJob();
         cookThread.interrupt();
 
         System.out.println("Eaten portions per savage:");
@@ -111,15 +110,9 @@ class Cook implements Runnable {
 
     int nrRefills = 0;
     private final Pot pot;
-    private boolean stopRefilling;
 
     public Cook(Pot pot) {
         this.pot = pot;
-    }
-
-    // Can be used once all the savages have eaten enough.
-    public void quitJob() {
-        stopRefilling = true;
     }
 
     @Override
@@ -132,8 +125,6 @@ class Cook implements Runnable {
             } catch (InterruptedException e) {
                 System.err.println("The cook is dead, go home everyone!");
             }
-            if (stopRefilling)
-                break;
         }
     }
 }
