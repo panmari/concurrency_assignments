@@ -8,6 +8,7 @@ public class Benchmark {
     public static void main(String[] args) throws InterruptedException {
         //int[] different_nr_threads = new int[] {8, 4, 2, 1};
         int[] different_nr_threads = new int[] {1, 2, 4, 8};
+        System.out.printf("%s\t%s\t%s\t%s\n", "#Threads", "Mode", "Runtime in ms", "Speedup");
         for (int nr_threads: different_nr_threads) {
             long runtime = 0L;
             long[] runtimes = new long[ComputationMode.values().length];
