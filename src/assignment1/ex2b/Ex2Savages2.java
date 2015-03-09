@@ -1,10 +1,9 @@
-package assignment1.ex2;
+package assignment1.ex2b;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-public class Ex2Savages1 {
-
+public class Ex2Savages2 {
     private static final int NR_SAVAGES = 10;
 
     public static void main(String[] args) throws InterruptedException {
@@ -37,8 +36,7 @@ public class Ex2Savages1 {
             t.join();
         }
         // Stop cook:
-        cook.quitJob();
-        cookThread.join();
+        cookThread.interrupt();
 
         System.out.println("Eaten portions per savage:");
         for (Savage s: savages) {
@@ -46,6 +44,7 @@ public class Ex2Savages1 {
         }
     }
 }
+
 
 class Savage implements Runnable {
     private final Cook cook;
@@ -74,50 +73,36 @@ class Savage implements Runnable {
      * @return true, if eating succeeded. False otherwise.
      */
     public boolean tryToEat() {
-        boolean eaten = false;
         try {
-            pot.lock.acquire();
+            pot.usePot.acquire();
             if (pot.isEmpty()) {
-                if (!cook.isCooking())
-                    cook.inform();
-            } else {
-                pot.takePortion();
-                eaten = true;
+                pot.informCook.release();
             }
-            pot.lock.release();
+            pot.takePortion();
+            pot.usePot.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return eaten;
+        return true;
     }
 }
 
 class Pot {
     private final int MAX_PORTIONS = 5;
-    private int portions = 0;
-    Semaphore lock = new Semaphore(1);
+    private Semaphore portions = new Semaphore(MAX_PORTIONS);
+    Semaphore usePot = new Semaphore(1);
+    Semaphore informCook = new Semaphore(0);
 
-    public boolean isEmpty() {
-        return portions == 0;
+    public void takePortion() throws InterruptedException {
+        portions.acquire();
     }
 
-    public void takePortion() {
-        if (portions == 0)
-            throw new PotException("No more portions available!");
-        portions--;
+    public boolean isEmpty() {
+        return portions.availablePermits() == 0;
     }
 
     public void fill() {
-        if (portions != 0)
-            throw new PotException("Pot was not empty!");
-        portions = MAX_PORTIONS;
-    }
-}
-
-class PotException extends RuntimeException {
-
-    public PotException(String s) {
-        super(s);
+        portions.release(MAX_PORTIONS);
     }
 }
 
@@ -125,42 +110,21 @@ class Cook implements Runnable {
 
     int nrRefills = 0;
     private final Pot pot;
-    private boolean doRefill;
-    private boolean stopRefilling;
 
     public Cook(Pot pot) {
         this.pot = pot;
     }
 
-    public void inform() {
-        doRefill = true;
-    }
-
-    public boolean isCooking() {
-        return doRefill;
-    }
-
-    // Can be used once all the savages have eaten enough.
-    public void quitJob() {
-        stopRefilling = true;
-    }
-
     @Override
     public void run() {
         while (true) {
-            if (doRefill) {
-                try {
-                    pot.lock.acquire();
-                    pot.fill();
-                    nrRefills++;
-                    doRefill = false;
-                    pot.lock.release();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                pot.informCook.acquire();
+                pot.fill();
+                nrRefills++;
+            } catch (InterruptedException e) {
+                System.err.println("The cook is dead, go home everyone!");
             }
-            if (stopRefilling)
-                break;
         }
     }
 }

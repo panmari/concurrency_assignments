@@ -1,0 +1,45 @@
+# Reasoning behind concurrent behavior of savages
+
+Both programs work fundamentally in the same way. The only difference is, that every savage immediately has 'hungry'
+set to false after eating for the first time.
+
+The pot is implemented as a semaphore with N resources (portions
+as a maximum (the number of portions that can fit into the pot). The savages consume resources (portions) as long as
+there are left. Since we only want one savage to have access to the pot
+at any time, there is an additional semaphore for managing the access to the pot.
+
+If the pot runs out of resources, the cook is informed and the informing savage waits until
+the cook has filled up the pot while holding the lock on the pot.
+
+The first synchronization concern is, that a savage could take from an empty pot. This is not possible, since the
+portions in the pot are implemented as semaphore, so it can not go below zero. The second synchronization issue that
+could occur is when the cook tries to fill a non-empty pot. This is not possible either, since the savage informing
+the cook is locking the pot while informing him, preventing further changes of the amount of portions.
+
+As long as the cook thread is alive, starvation is not possible. As soon as the pot is empty, the cook is informed.
+The cook has always access to the pot, even without lock, so he can refill the pot without any problems.
+
+
+Sample output:
+Cook had to refill 0 times.
+Cook had to refill 3498 times.
+Cook had to refill 11348 times.
+Cook had to refill 20014 times.
+Cook had to refill 28393 times.
+Cook had to refill 34558 times.
+Cook had to refill 41011 times.
+Cook had to refill 49255 times.
+Cook had to refill 56596 times.
+Cook had to refill 64716 times.
+Eaten portions per savage:
+22296
+13323
+27974
+23754
+10557
+3939
+11062
+10377
+82258
+148570
+The cook is dead, go home everyone!

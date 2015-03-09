@@ -1,9 +1,9 @@
-package assignment1.ex2_semaphores;
+package assignment1.ex2a;
 
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-public class Ex2Savages1Semaphores {
+public class Ex2Savages1 {
     private static final int NR_SAVAGES = 10;
 
     public static void main(String[] args) throws InterruptedException {
@@ -49,12 +49,10 @@ public class Ex2Savages1Semaphores {
 class Savage implements Runnable {
     private final Cook cook;
     private final Pot pot;
-    private final int nrSavages;
     int eatCount = 0;
     boolean hungry;
 
     public Savage(Pot pot, Cook cook, int nrSavages) {
-        this.nrSavages = nrSavages;
         this.hungry = true;
         this.pot = pot;
         this.cook = cook;
@@ -79,6 +77,8 @@ class Savage implements Runnable {
                 pot.informCook.release();
             }
             pot.takePortion();
+            // Only eat once.
+            this.hungry = false;
             pot.usePot.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
