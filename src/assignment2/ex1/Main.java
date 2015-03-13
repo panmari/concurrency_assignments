@@ -1,30 +1,32 @@
 package assignment2.ex1;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class Main {
 
 	public static void main(String[] args) throws InterruptedException {
-		
+
 		int nThreads = Integer.parseInt(args[0]);
 
-		if (args.length > 1 && args[1].equals("true"))
+		if (args[1].equals("true"))
 			setSolarisAffinity();
-		
+
 		Counter counter;
-		if (args.length > 2 && args[2].equals("true")) {
-			System.out.println("Using volatile counter.");
+		if (args[2].equals("true")) {
 			counter = new VolatileCounter(nThreads);
 		} else {
-			System.out.println("Using non-volatile counter.");
 			counter = new NonVolatileCounter(nThreads);
 		}
-		
+
 		ArrayList<Thread> threads = new ArrayList<Thread>(nThreads);
+
 		// Create incrementors.
+		int[] incrementCount = new int[nThreads];
 		for (int i = 0; i < nThreads; i++) {
-			threads.add(new Thread(new Incrementor(counter)));
+			Incrementor inc = new Incrementor(counter, incrementCount);
+			threads.add(new Thread(inc));
 		}
 
 		long start = System.nanoTime();
@@ -39,8 +41,16 @@ public class Main {
 		}
 		long end = System.nanoTime();
 		double duration = (end - start) / 1e6;
-		System.out.printf("Counted to %d in %.2fms\n", counter.getCount(),
-				duration);
+		System.out.println("Statistics for: ");
+		System.out.println("#Threads: " + nThreads);
+		System.out.println("Affinity to only one process: " + args[1]);
+		System.out.println("Volatile counter: " + args[2]);
+		System.out.println("Counter end value: " + counter.getCount());
+		Arrays.sort(incrementCount);
+		System.out.println("Lowest number of increments: " + incrementCount[0]);
+		System.out.println("Highest number of increments: "
+				+ incrementCount[incrementCount.length - 1]);
+		System.out.printf("Execution time: %.2fms\n", duration);
 	}
 
 	public static void setSolarisAffinity() {
@@ -63,8 +73,9 @@ public class Main {
 }
 
 abstract class Counter {
-	
+
 	PetersonsLock lock;
+
 	public Counter(int nThreads) {
 		this.lock = new PetersonsLock(nThreads);
 	}
@@ -72,9 +83,9 @@ abstract class Counter {
 	public void lock(long threadId) {
 		this.lock.lock(threadId);
 	}
-	
+
 	public abstract long getCount();
-	
+
 	public abstract void increment();
 }
 
@@ -167,12 +178,13 @@ class PetersonsLock {
 
 class Incrementor implements Runnable {
 
-	private int lockCount = 0;
 	private Counter counter;
+	private int[] incrementorCount;
 	private static final int MAX_COUNT = 300000;
 
-	Incrementor(Counter counter) {
+	Incrementor(Counter counter, int[] incrementorCount) {
 		this.counter = counter;
+		this.incrementorCount = incrementorCount;
 	}
 
 	@Override
@@ -182,11 +194,9 @@ class Incrementor implements Runnable {
 			counter.lock.lock(threadId);
 			if (counter.getCount() < MAX_COUNT) {
 				counter.increment();
-				lockCount++;
 				counter.lock.unlock(threadId);
+				incrementorCount[(int) (threadId % incrementorCount.length)]++;
 			} else {
-				System.out.println("Thread " + threadId + " incremented "
-						+ lockCount + " times.");
 				counter.lock.unlock(threadId);
 				break;
 			}
