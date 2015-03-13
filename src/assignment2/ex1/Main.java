@@ -8,10 +8,18 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		
 		int nThreads = Integer.parseInt(args[0]);
-		Counter counter = new Counter(nThreads);
 
-		if (args[1].equals("true"))
+		if (args.length > 1 && args[1].equals("true"))
 			setSolarisAffinity();
+		
+		Counter counter;
+		if (args.length > 2 && args[2].equals("true")) {
+			System.out.println("Using volatile counter.");
+			counter = new VolatileCounter(nThreads);
+		} else {
+			System.out.println("Using non-volatile counter.");
+			counter = new NonVolatileCounter(nThreads);
+		}
 		
 		ArrayList<Thread> threads = new ArrayList<Thread>(nThreads);
 		// Create incrementors.
@@ -54,12 +62,27 @@ public class Main {
 	}
 }
 
-class Counter {
-	private long count = 0;
+abstract class Counter {
+	
 	PetersonsLock lock;
-
 	public Counter(int nThreads) {
 		this.lock = new PetersonsLock(nThreads);
+	}
+
+	public void lock(long threadId) {
+		this.lock.lock(threadId);
+	}
+	
+	public abstract long getCount();
+	
+	public abstract void increment();
+}
+
+class VolatileCounter extends Counter {
+	private volatile long count = 0;
+
+	public VolatileCounter(int nThreads) {
+		super(nThreads);
 	}
 
 	public void increment() {
@@ -69,12 +92,23 @@ class Counter {
 	public long getCount() {
 		return count;
 	}
-	/*
-	 * public String toString() { StringBuffer b = new StringBuffer(); for (int
-	 * i = 0; i < threadCounter.length; i++) {
-	 * b.append(String.format("%i:\t%i\n", i, threadCounter[i])); }
-	 * b.append(String.format("Total:\t%i\n", counter)); return b.toString(); }
-	 */
+
+}
+
+class NonVolatileCounter extends Counter {
+	private long count = 0;
+
+	public NonVolatileCounter(int nThreads) {
+		super(nThreads);
+	}
+
+	public void increment() {
+		count++;
+	}
+
+	public long getCount() {
+		return count;
+	}
 }
 
 class PetersonsLock {
