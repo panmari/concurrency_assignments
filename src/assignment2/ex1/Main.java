@@ -10,8 +10,10 @@ public class Main {
 
 		int nThreads = Integer.parseInt(args[0]);
 
-		if (args[1].equals("true"))
+		if (args[1].equals("true")) {
 			setSolarisAffinity();
+			System.out.println("Set affinity to only one processor.");
+		}
 
 		Counter counter;
 		if (args[2].equals("true")) {
@@ -39,6 +41,7 @@ public class Main {
 		for (Thread t : threads) {
 			t.join();
 		}
+
 		long end = System.nanoTime();
 		double duration = (end - start) / 1e6;
 		System.out.println("Statistics for: ");
@@ -62,9 +65,12 @@ public class Main {
 			int pid = Integer.parseInt(pid_array[0]);
 			// random processor
 			int processor = new java.util.Random().nextInt(32);
+			System.out.println("Trying to lock Processor #" + processor);
+			System.out.println("By executing");
+			String cmd = "/usr/sbin/pbind -b " + processor + " " + pid;
+			System.out.println(cmd);
 			// Set process affinity to one processor ( on Solaris )
-			Process p = Runtime.getRuntime().exec(
-					"/usr/sbin/pbind -b" + processor + " " + pid);
+			Process p = Runtime.getRuntime().exec(cmd);
 			p.waitFor();
 		} catch (Exception err) {
 			err.printStackTrace();
