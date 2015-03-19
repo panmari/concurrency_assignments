@@ -1,0 +1,14 @@
+# Fairness of generalized Peterson Lock
+
+There is fairness in the sense that there is no starvation. But still it is not possible to find an r-bound for the Peterson Lock. Here's a little example with 3 threads:
+
+1. All 3 threads enter level 1, thread 2 last so he's the victim of level 1.
+2. Thread 0 quickly advances to level 2 and then 3, becomes victim in both there, but since there are no threads higher it can advance.
+3. Thread 0 atteins lock.
+4. Thread 0 releases lock and immediately reenters level 1, being the victim there it can not advance (since other threads are on same level)
+5. Thread 1 advances (as thread 0 before) quickly to 2, then 3, since there is noone in higher levels.
+6. Thread 1 atteins lock
+7. Thread 1 atteins lock, immediately reenters level 1. This enables thread 0 again to advance.
+8. Thread 0 quickly advances... (back to step 2)
+
+In short, thread 0 and 1 alternately attain the lock, while thread 2 (for some reason) never checks if it can advance. That makes it possible that it's overtaken an unbounded amount of times.
