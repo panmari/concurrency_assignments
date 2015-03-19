@@ -12,3 +12,10 @@ There is fairness in the sense that there is no starvation. But still it is not 
 8. Thread 0 quickly advances... (back to step 2)
 
 In short, thread 0 and 1 alternately attain the lock, while thread 2 (for some reason) never checks if it can advance. That makes it possible that it's overtaken an unbounded amount of times.
+
+## Providing fairness
+
+The lock can be used together with a construct such as written on
+http://members.unine.ch/yaroslav.hayduk/conclab/lab04.html
+to provide fairness.
+Here, we ensure that all threads enter the critical section the same amount of times by constructing a doorway that only lets a thread reapply for a lock once all other threads have also finished their critical section.
