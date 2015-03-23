@@ -1,0 +1,13 @@
+# Exercise 3 - Linearizability & sequential consistency
+
+## Linearizability
+
+The execution sequence in Figure 1 is linearizable by imposing the order as visualized in Linearizable.bmp.
+
+The sequence in Figure 2, however, is not linearizable. In order for the last call `r.read(1)` of Thread B to succeed, it would have to be called after `r.write(1)` takes effect (also in thread B). This is not possible, since between the two there is the call `r.read(2)` that will always take effect before r.read(1).
+
+## Sequential consistency
+
+Figure 1 is trivially sequentially consistent, since it's linearizable.
+
+Figure 2 is however not even sequentially consistent. The reasoning is similar as for linearizability, but here we additionally have to mention that r.write(1), r.read(2) and r.read(1) are executed in this order in the *same* thread, which prohibits reordering.

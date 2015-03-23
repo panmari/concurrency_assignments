@@ -134,7 +134,7 @@ class PetersonsLock {
 	private int nThreads;
 
 	public PetersonsLock(int nThreads) {
-		// These are implicitely initialized to 0.
+		// These are implicitly initialized to 0.
 		level = new AtomicIntegerArray(nThreads);
 		victim = new AtomicIntegerArray(nThreads);
 		this.nThreads = nThreads;
