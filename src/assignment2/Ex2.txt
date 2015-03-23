@@ -18,4 +18,4 @@ In short, thread 0 and 1 alternately attain the lock, while thread 2 (for some r
 The lock can be used together with a construct such as written on
 http://members.unine.ch/yaroslav.hayduk/conclab/lab04.html
 to provide fairness.
-Here, we ensure that all threads enter the critical section the same amount of times by constructing a doorway that only lets a thread reapply for a lock once all other threads have also finished their critical section.
+Here, we ensure that all threads enter the critical section the same amount of times by constructing a doorway that only lets a thread reapply for a lock for the critical section once all other threads have also finished their critical section.
