@@ -1,0 +1,85 @@
+-bash-3.00$ java assignment2.ex1.Main 4 true true
+Set affinity to only one processor.
+Statistics for: 
+#Threads: 4
+Affinity to only one process: true
+Volatile counter: true
+Counter end value: 30000
+Lowest number of increments: 0
+Highest number of increments: 30000
+Execution time: 388.48ms
+-bash-3.00$ java assignment2.ex1.Main 4 false true
+Statistics for: 
+#Threads: 4
+Affinity to only one process: false
+Volatile counter: true
+Counter end value: 30000
+Lowest number of increments: 7491
+Highest number of increments: 7509
+Execution time: 94.48ms
+-bash-3.00$ java assignment2.ex1.Main 4 true false
+Set affinity to only one processor.
+Statistics for: 
+#Threads: 4
+Affinity to only one process: true
+Volatile counter: false
+Counter end value: 30000
+Lowest number of increments: 0
+Highest number of increments: 30000
+Execution time: 350.21ms
+-bash-3.00$ java assignment2.ex1.Main 4 false false
+Statistics for: 
+#Threads: 4
+Affinity to only one process: false
+Volatile counter: false
+Counter end value: 30000
+Lowest number of increments: 7465
+Highest number of increments: 7516
+Execution time: 90.65ms
+
+-bash-3.00$ java assignment2.ex1.Main 8 true true
+Set affinity to only one processor.
+Statistics for: 
+#Threads: 8
+Affinity to only one process: true
+Volatile counter: true
+Counter end value: 30000
+Lowest number of increments: 0
+Highest number of increments: 30000
+Execution time: 452.16ms
+-bash-3.00$ java assignment2.ex1.Main 8 true false
+Set affinity to only one processor.
+Statistics for: 
+#Threads: 8
+Affinity to only one process: true
+Volatile counter: false
+Counter end value: 30000
+Lowest number of increments: 0
+Highest number of increments: 30000
+Execution time: 387.31ms
+-bash-3.00$ java assignment2.ex1.Main 8 false true
+Statistics for: 
+#Threads: 8
+Affinity to only one process: false
+Volatile counter: true
+Counter end value: 30000
+Lowest number of increments: 3734
+Highest number of increments: 3756
+Execution time: 105.33ms
+-bash-3.00$ java assignment2.ex1.Main 8 false false
+Statistics for: 
+#Threads: 8
+Affinity to only one process: false
+Volatile counter: false
+Counter end value: 30000
+Lowest number of increments: 3728
+Highest number of increments: 3756
+Execution time: 101.93ms
+
+# Conclusion
+Since execution time with affinity set to only one processor took very long to compute, I set the counter value to a lower value (30000). 
+As expected, by using more threads we increase only the overhead of and computation gets slower. Also the keyword 'volatile' does decrease the speed a tiny bit, but I would have expected more than 5 ms (similar for 4 and 8 threads).
+The setting with the most visible effect was by far setting affinity to only one processor. Execution time gets then about 4 times slower. Also context switching seems to be somewhat disabled then, since only one counter does all the counting, the others never seem to increment.
+
+For the other cases, the filter lock seems to be pretty fair. There is not a large difference between the lowest and highest number of increments.
+
