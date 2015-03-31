@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
 public class Ex2Savages2 {
-    private static final int NR_SAVAGES = 10;
+    private static final int NR_SAVAGES = 20;
 
     public static void main(String[] args) throws InterruptedException {
         ArrayList<Thread> savageThreads = new ArrayList<Thread>(NR_SAVAGES);
@@ -110,6 +110,7 @@ class Cook implements Runnable {
 
     int nrRefills = 0;
     private final Pot pot;
+    private boolean isDead = false;
 
     public Cook(Pot pot) {
         this.pot = pot;
@@ -117,12 +118,14 @@ class Cook implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+    	
+        while (!isDead) {
             try {
                 pot.informCook.acquire();
                 pot.fill();
                 nrRefills++;
             } catch (InterruptedException e) {
+            	isDead = true;
                 System.err.println("The cook is dead, go home everyone!");
             }
         }

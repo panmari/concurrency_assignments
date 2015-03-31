@@ -62,15 +62,15 @@ class Savage implements Runnable {
     public void run() {
         while(hungry) {
             // Only one savage may access the pot at any time.
-            if (tryToEat())
-                eatCount++;
+            tryToEat();
+            eatCount++;
         }
     }
 
     /**
      * @return true, if eating succeeded. False otherwise.
      */
-    public boolean tryToEat() {
+    public void tryToEat() {
         try {
             pot.usePot.acquire();
             if (pot.isEmpty()) {
@@ -83,7 +83,6 @@ class Savage implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return true;
     }
 }
 
@@ -110,6 +109,7 @@ class Cook implements Runnable {
 
     int nrRefills = 0;
     private final Pot pot;
+    boolean isDead = false;
 
     public Cook(Pot pot) {
         this.pot = pot;
@@ -117,13 +117,14 @@ class Cook implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (!isDead) {
             try {
                 pot.informCook.acquire();
                 pot.fill();
                 nrRefills++;
             } catch (InterruptedException e) {
                 System.err.println("The cook is dead, go home everyone!");
+                isDead = true;
             }
         }
     }
