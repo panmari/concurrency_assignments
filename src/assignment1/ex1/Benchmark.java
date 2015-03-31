@@ -16,8 +16,9 @@ public class Benchmark {
                 for (int i = 0; i < NR_RUNS + 1; i++) {
                     // Manually call gc before benchmarking.
                     System.gc();
-                    long start = System.nanoTime();
                     ThreadedCountRunner t = new ThreadedCountRunner(nr_threads, nr_threads, cm, false);
+                    long start = System.nanoTime();
+                    t.run();
                     long stop = System.nanoTime();
                     // First run is only warmup.
                     if (i > 0) {

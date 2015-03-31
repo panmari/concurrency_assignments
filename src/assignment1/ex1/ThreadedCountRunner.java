@@ -1,6 +1,7 @@
 package assignment1.ex1;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -10,16 +11,16 @@ public class ThreadedCountRunner {
 
     private final boolean verbose;
     public final Counter counter;
-
+    private Collection<Thread> threads;
     public ThreadedCountRunner(int n, int m, ComputationMode computationMode) throws InterruptedException {
         this(n, m, computationMode, true);
     }
 
-    public ThreadedCountRunner(int n, int m, ComputationMode computationMode, boolean verbose) throws InterruptedException {
+    public ThreadedCountRunner(int n, int m, ComputationMode computationMode, boolean verbose) {
         this.verbose = verbose;
         counter = new Counter();
 
-        ArrayList<Thread> threads = new ArrayList<Thread>(n + m);
+        threads = new ArrayList<Thread>(n + m);
         // Create incrementors.
         for (int i = 0; i < n; i++) {
             threads.add(new Thread(new Incrementor(counter, computationMode)));
@@ -28,6 +29,13 @@ public class ThreadedCountRunner {
         for (int i = 0; i < m; i++) {
             threads.add(new Thread(new Decrementor(counter, computationMode)));
         }
+
+        if (verbose) {
+            System.out.printf("Using %d incrementors and %d decrementors.\n", n, m);
+        }
+    }
+
+    public void run() throws InterruptedException {
         // Start threads
         for (Thread t: threads) {
             t.start();
@@ -35,11 +43,6 @@ public class ThreadedCountRunner {
         // Join threads
         for (Thread t: threads) {
             t.join();
-        }
-
-        if (verbose) {
-            System.out.printf("Using %d incrementors and %d decrementors.\n", n, m);
-            System.out.println("Final value on counter: " + counter.count);
         }
     }
 }
