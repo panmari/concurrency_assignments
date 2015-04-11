@@ -1,0 +1,16 @@
+package assignment3.ex2;
+
+public class Enqueuer extends QueueActor {
+
+	private IIntQueue queue;
+	
+	public Enqueuer(IIntQueue queue) {
+		this.queue = queue;
+	}
+	
+	@Override
+	protected void act() {
+		queue.enq(1);
+	}
+
+}
