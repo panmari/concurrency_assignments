@@ -1,0 +1,28 @@
+#Threads: 2
+Queue type: class assignment3.ex2.MultiThreadOneLockQueue
+Execution time: 55.42ms
+Queue type: class assignment3.ex2.MultiThreadTwoLockQueue
+Execution time: 39.99ms
+Queue type: class assignment3.ex2.TwoThreadNoLockQueue
+Execution time: 21.63ms
+#Threads: 4
+Queue type: class assignment3.ex2.MultiThreadOneLockQueue
+Execution time: 119.70ms
+Queue type: class assignment3.ex2.MultiThreadTwoLockQueue
+Execution time: 59.69ms
+#Threads: 8
+Queue type: class assignment3.ex2.MultiThreadOneLockQueue
+Execution time: 348.46ms
+Queue type: class assignment3.ex2.MultiThreadTwoLockQueue
+Execution time: 122.04ms
+
+For the benchmarks above I ran 4 runs for each combination of threads/queue type - using the first for warmup only and
+averaging the others.
+Since each thread add also increases the workload by 100'000, the best case (i. e. no overhead was added) 
+for adding threads would be for the duration to stay the same. 
+
+As expected, the NoLockQueue variant takes the cake if there are only two threads. It does however not scale to more than
+two threads. For the other queue types we can observe that the execution time doubles, even though, as explained above, we 
+would expect it to stay the same in the best case. This leads to the conclusion that there is quite a lot of overhead caused
+by concurrent execution. Further, the variant with two locks performs much better than the one with only one lock. This is also
+expected, since two locks allow dequeuing and enqueueing at the same time, which cuts the runtime in about half.

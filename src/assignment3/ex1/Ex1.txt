@@ -1,0 +1,51 @@
+#Threads: 4
+Statistics for: 
+Lock: class assignment2.ex1.PetersonsLock
+Counter end value: 300000
+Lowest number of increments: 73940
+Highest number of increments: 75686
+Sorted number of increments per thread: [73940, 74916, 75458, 75686]
+Execution time: 288.72ms
+Statistics for: 
+Lock: class assignment3.ex1.CASLock
+Counter end value: 300000
+Lowest number of increments: 62162
+Highest number of increments: 82053
+Sorted number of increments per thread: [62162, 77689, 78096, 82053]
+Execution time: 164.57ms
+Statistics for: 
+Lock: class assignment3.ex1.CCASLock
+Counter end value: 300000
+Lowest number of increments: 37589
+Highest number of increments: 99374
+Sorted number of increments per thread: [37589, 67736, 95301, 99374]
+Execution time: 75.33ms
+
+#Threads: 8
+Statistics for: 
+Lock: class assignment2.ex1.PetersonsLock
+Counter end value: 300000
+Lowest number of increments: 37163
+Highest number of increments: 37704
+Sorted number of increments per thread: [37163, 37191, 37465, 37546, 37591, 37644, 37696, 37704]
+Execution time: 402.64ms
+Statistics for: 
+Lock: class assignment3.ex1.CASLock
+Counter end value: 300000
+Lowest number of increments: 29757
+Highest number of increments: 44760
+Sorted number of increments per thread: [29757, 33397, 33551, 38122, 39516, 39599, 41298, 44760]
+Execution time: 233.27ms
+Statistics for: 
+Lock: class assignment3.ex1.CCASLock
+Counter end value: 300000
+Lowest number of increments: 4246
+Highest number of increments: 122210
+Sorted number of increments per thread: [4246, 4964, 8960, 13750, 25334, 53284, 67252, 122210]
+Execution time: 86.47ms
+
+While the CAS/CCAS lock perform much better than the Peterson lock, from the statistics above it is also apparent that
+the Peterson lock is much fairer compared to the others: The difference between lowest and highest number of increments
+for a single thread is much smaller there.
+
+Unsurprisingly, the CCAS lock outperforms the CAS lock. The large overhead from calling compareAndSet becomes very clear here.

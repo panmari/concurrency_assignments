@@ -51,6 +51,7 @@ public class Main {
 			System.out.println("Lowest number of increments: " + incrementCount[0]);
 			System.out.println("Highest number of increments: "
 					+ incrementCount[incrementCount.length - 1]);
+			System.out.println("Sorted number of increments per thread: " + Arrays.toString(incrementCount));
 			System.out.printf("Execution time: %.2fms\n", duration);
 		}
 	}
