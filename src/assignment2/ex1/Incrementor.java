@@ -4,7 +4,7 @@ public class Incrementor implements Runnable {
 
 	private Counter counter;
 	private int[] incrementorCount;
-	private static final int MAX_COUNT = 30000;
+	private static final int MAX_COUNT = 300000;
 
 	public Incrementor(Counter counter, int[] incrementorCount) {
 		this.counter = counter;
