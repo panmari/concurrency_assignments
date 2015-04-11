@@ -17,6 +17,7 @@ public class MultiThreadTwoLockQueue implements IIntQueue {
 		this.QSIZE = QSIZE;
 		this.items = new int[QSIZE];
 	}
+	
 	public void enq(int x) {
 		enqueueLock.lock();
 		while (tail - head == QSIZE) {}
