@@ -7,7 +7,7 @@ import java.util.concurrent.locks.Lock;
 
 public class CCASLock implements Lock {
 
-	AtomicInteger a = new AtomicInteger(0);
+	private AtomicInteger a = new AtomicInteger(0);
 	
 	@Override
 	public void lock() {
