@@ -18,7 +18,7 @@ Execution time: 122.04ms
 
 For the benchmarks above I ran 4 runs for each combination of threads/queue type - using the first for warmup only and
 averaging the others.
-Since each thread add also increases the workload by 100'000, the best case (i. e. no overhead was added) 
+Since each thread add also increases the workload by 100'000, the best case (i. e. no overhead through multithreading was added) 
 for adding threads would be for the duration to stay the same. 
 
 As expected, the NoLockQueue variant takes the cake if there are only two threads. It does however not scale to more than
@@ -26,3 +26,8 @@ two threads. For the other queue types we can observe that the execution time do
 would expect it to stay the same in the best case. This leads to the conclusion that there is quite a lot of overhead caused
 by concurrent execution. Further, the variant with two locks performs much better than the one with only one lock. This is also
 expected, since two locks allow dequeuing and enqueueing at the same time, which cuts the runtime in about half.
+
+Appendum:
+A possible way to speed up the results of the MultiThreadOneLockQueue would be to check the full/empty condition for queuing
+respectively dequing before acquiring the lock, then acquire the lock and recheck the condition - in a similar fashion to
+CCAS when compared to CAS. I only tested performance with the simpler implementation.
