@@ -1,6 +1,6 @@
 package assignment3.ex2;
 
-public class Dequeuer extends QueueActor {
+public class Dequeuer extends RunnableActor {
 
 	private IIntQueue queue;
 	
