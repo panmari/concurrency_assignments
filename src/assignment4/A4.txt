@@ -1,0 +1,26 @@
+-bash-3.00$ java assignment4.ex1.BenchmarkListImplementations
+#Threads: 2
+List type: class assignment4.ex1.FineGrainedLockList
+Execution time: 173.51ms
+List type: class assignment4.ex1.OptimisticFineGrainedLockList
+Execution time: 52.66ms
+#Threads: 4
+List type: class assignment4.ex1.FineGrainedLockList
+Execution time: 741.18ms
+List type: class assignment4.ex1.OptimisticFineGrainedLockList
+Execution time: 55.76ms
+#Threads: 8
+List type: class assignment4.ex1.FineGrainedLockList
+Execution time: 775.62ms
+List type: class assignment4.ex1.OptimisticFineGrainedLockList
+Execution time: 67.81ms
+
+As in a previous exercise, I ran the benchmarking code four times and printed the 
+average of the last three runs as result,
+discarding the runtime of the first run (i. e. using it as warmup).
+
+The performance of the optimistic fine grained lock list is, as expected, 
+much better than the non-optimistic one. While the difference was not that grave on my local machine
+(around factor 2 between the implementations), the trials on the Sun machine demonstrated the 
+performance gap clearly. The overhead of constantly locking while traversing outweighs the cost of 
+traversing twice by a large amount there.
