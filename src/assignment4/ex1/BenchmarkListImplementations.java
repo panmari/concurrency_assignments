@@ -17,7 +17,8 @@ public class BenchmarkListImplementations {
 		for (int nThreads : nThreadsOptions) {
 			ArrayList<IFineGrainedLockList> lists = new ArrayList<IFineGrainedLockList>(2);
 			lists.add(new FineGrainedLockList());
-
+			lists.add(new OptimisticFineGrainedLockList());
+			
 			System.out.println("#Threads: " + nThreads);
 			for (IFineGrainedLockList queue : lists) {
 				double duration = 0;
