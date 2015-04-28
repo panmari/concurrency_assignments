@@ -74,10 +74,6 @@ public class OptimisticFineGrainedLockList implements IFineGrainedLockList {
 			Node pred = this.head;
 			Node curr = pred.next;
 			while (curr.getKey() <= key) {
-				// if already present => return false
-				if (key == curr.getKey()) {
-					return true;
-				}
 				pred = curr;
 				curr = curr.next;
 			}
