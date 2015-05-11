@@ -14,7 +14,7 @@ public class Main {
 
 		int[] nThreadsOptions = new int[] { 2, 4, 8 };
 		for (int nThreads : nThreadsOptions) {
-			ArrayList<IIntQueue> queues = new ArrayList<IIntQueue>(3);
+			ArrayList<IIntQueue> queues = new ArrayList<IIntQueue>(2);
 			queues.add(new UnboundLockQueue());
 			queues.add(new UnboundLockFreeQueue());
 

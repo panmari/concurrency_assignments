@@ -9,6 +9,13 @@ public class UnboundLockFreeQueue implements IIntQueue {
 	AtomicReference<LockFreeNode> head = new AtomicReference<LockFreeNode>();
 	AtomicReference<LockFreeNode> tail = new AtomicReference<LockFreeNode>();
 
+	public UnboundLockFreeQueue() {
+		// create sentinel
+		LockFreeNode sentinel = new LockFreeNode(Integer.MIN_VALUE);
+		head.set(sentinel);
+		tail.set(sentinel);
+	}
+	
 	@Override
 	public void enq(int value) {
 		LockFreeNode newNode = new LockFreeNode(value);

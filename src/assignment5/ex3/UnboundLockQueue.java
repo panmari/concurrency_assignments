@@ -13,6 +13,10 @@ public class UnboundLockQueue implements IIntQueue {
 	public UnboundLockQueue() {
 		this.enqueueLock = new CCASLock();
 		this.dequeueLock = new CCASLock();
+		// create sentinel
+		Node sentinel = new Node(Integer.MIN_VALUE);
+		head = sentinel;
+		tail = sentinel;
 	}
 
 	@Override

@@ -40,6 +40,13 @@ public class TestQueues {
 	public void emptyQueueShouldThrowException() {
 		queue.deq();
 	}
+	
+	@Test(expected=RuntimeException.class)
+	public void emptyQueueShouldThrowExceptionAfterEnqueuingOnce() {
+		queue.enq(1);
+		assertEquals(1, queue.deq());
+		queue.deq();
+	}
 
 	@Test
 	public void oneItemShouldBeQueuedAndReturned() {
@@ -51,8 +58,8 @@ public class TestQueues {
 	public void twoItemsShouldBeQueuedInRightOrder() {
 		queue.enq(1);
 		queue.enq(2);
-		assertEquals(2, queue.deq());
 		assertEquals(1, queue.deq());
+		assertEquals(2, queue.deq());
 	}
 
 	@Test
@@ -62,8 +69,8 @@ public class TestQueues {
 		// Should be empty now, try some more stuff:
 		queue.enq(1);
 		queue.enq(2);
-		assertEquals(2, queue.deq());
 		assertEquals(1, queue.deq());
+		assertEquals(2, queue.deq());
 	}
 	
 	@Test
