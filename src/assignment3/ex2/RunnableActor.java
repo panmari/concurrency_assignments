@@ -20,7 +20,9 @@ public abstract class RunnableActor implements Runnable {
 	public void run() {
 		try {
 			barrier.await();
-		} catch (InterruptedException | BrokenBarrierException e) {
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (BrokenBarrierException e) {
 			e.printStackTrace();
 		}
 		for(int actions = 0; actions < maxActions; actions++ ) {
