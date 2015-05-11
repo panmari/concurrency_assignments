@@ -16,16 +16,16 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestFineGrainedLockList {
 
 	private IFineGrainedLockList list;
-	private Class listClass;
+	private Class<?> listClass;
 
 	@Parameters
-	public static Collection getImplementations() {
+	public static Collection<?> getImplementations() {
 		Object[][] a = new Object[][] { { FineGrainedLockList.class },
 				{ OptimisticFineGrainedLockList.class } };
 		return Arrays.asList(a);
 	}
 
-	public TestFineGrainedLockList(Class cl) {
+	public TestFineGrainedLockList(Class<?> cl) {
 		this.listClass = cl;
 	}
 

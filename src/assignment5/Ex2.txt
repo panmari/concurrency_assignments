@@ -1,0 +1,14 @@
+# Exercise 2 - HWQueue
+
+Not necessarily. While trying to dequeue, thread C loops over the whole items array trying to 
+find the first item that is not null. But there is no mechanism that stops a thread D, which
+called dequeue after C, to overtake thread C while looping over the items 
+(e. g. because takes very long for the comparison `value != null`). So in the end it
+could be thread D that first arrives at a non-null value and effectively dequeuing it.
+
+But if we define FIFO a bit differently, as in
+
+	If element `a` was the element that was enqueued last, 
+	it should be the one that is dequeued first.
+	
+then it is FIFO.

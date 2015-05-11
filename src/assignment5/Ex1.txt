@@ -1,0 +1,19 @@
+# Exercise 1 - Unbound lock based queue 
+
+No it's not possible. It could be that two threads are trying to dequeue a queue with 1 element at the exact same time,
+with the first thread executing the line
+
+	result = head.next.value;
+	
+but not the following line yet
+	
+	head = head.next;
+
+resulting in the second head (that is right now executing the check outside the lock)
+to believe that there is indeed an element left in the queue. 
+
+The second thread will then also enter the locked part, put throw a nullpointer exception on
+
+	result = head.next.value;
+
+since next will be null at this point.

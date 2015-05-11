@@ -1,22 +1,22 @@
-package assignment3.ex2;
+package assignment5.ex3;
 
 import java.util.ArrayList;
+
+import assignment3.ex2.Dequeuer;
+import assignment3.ex2.Enqueuer;
+import assignment3.ex2.IIntQueue;
 
 public class Main {
 
 	private static int nrRuns = 3;
-	private static int QSIZE = 20;
 	
 	public static void main(String[] args) throws InterruptedException {
 
 		int[] nThreadsOptions = new int[] { 2, 4, 8 };
 		for (int nThreads : nThreadsOptions) {
 			ArrayList<IIntQueue> queues = new ArrayList<IIntQueue>(3);
-			queues.add(new MultiThreadOneLockQueue(QSIZE));
-			queues.add(new MultiThreadTwoLockQueue(QSIZE));
-			if (nThreads == 2) {
-				queues.add(new TwoThreadNoLockQueue(QSIZE));
-			}
+			queues.add(new UnboundLockQueue());
+			queues.add(new UnboundLockFreeQueue());
 
 			System.out.println("#Threads: " + nThreads);
 			for (IIntQueue queue : queues) {
