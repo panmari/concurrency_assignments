@@ -1,0 +1,45 @@
+I ended up doing the benchmark in two different ways:
+
+a) Catch the exception in the dequeuer, if deq() was called on an empty queue
+
+-bash-3.00$ java assignment5.ex3.Main
+#Threads: 2
+Queue type: class assignment5.ex3.UnboundLockQueue
+Execution time: 15.51ms
+Queue type: class assignment5.ex3.UnboundLockFreeQueue
+Execution time: 28.05ms
+#Threads: 4
+Queue type: class assignment5.ex3.UnboundLockQueue
+Execution time: 11.76ms
+Queue type: class assignment5.ex3.UnboundLockFreeQueue
+Execution time: 10.80ms
+#Threads: 8
+Queue type: class assignment5.ex3.UnboundLockQueue
+Execution time: 12.17ms
+Queue type: class assignment5.ex3.UnboundLockFreeQueue
+Execution time: 10.97ms
+
+
+b) Add 100'000 items to the list in advance, so we can be sure deq() 
+is never called on an empty queue (this one is commited):
+
+-bash-3.00$ java assignment5.ex3.Main
+#Threads: 2
+Queue type: class assignment5.ex3.UnboundLockQueue
+Execution time: 16.44ms
+Queue type: class assignment5.ex3.UnboundLockFreeQueue
+Execution time: 21.21ms
+#Threads: 4
+Queue type: class assignment5.ex3.UnboundLockQueue
+Execution time: 11.91ms
+Queue type: class assignment5.ex3.UnboundLockFreeQueue
+Execution time: 12.15ms
+#Threads: 8
+Queue type: class assignment5.ex3.UnboundLockQueue
+Execution time: 12.99ms
+Queue type: class assignment5.ex3.UnboundLockFreeQueue
+Execution time: 12.50ms
+
+
+Both ways gave kind of reasonable results. It becomes very apparent, that there is a large overhead
+introduced by the lock-free queue, since it performs badly if only few threads are used.
