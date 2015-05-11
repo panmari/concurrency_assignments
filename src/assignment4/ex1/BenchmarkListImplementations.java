@@ -2,6 +2,7 @@ package assignment4.ex1;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.CyclicBarrier;
 
 public class BenchmarkListImplementations {
 
@@ -25,7 +26,8 @@ public class BenchmarkListImplementations {
 				// Use first round for warmup.
 				for (int r = 0; r < nrRuns + 1; r++) {
 					ArrayList<Thread> threads = new ArrayList<Thread>(nThreads);					
-					
+					CyclicBarrier barrier = new CyclicBarrier(nThreads);
+
 					// Create enqueuers and dequeuers.
 					for (int i = 0; i < nThreads / 2; i++) {
 						// Generate numbers to add/remove
@@ -37,8 +39,8 @@ public class BenchmarkListImplementations {
 							addList.add(rng.nextInt(100));
 							removeList.add(rng.nextInt(100));
 						}
-						threads.add(new Thread(new Adder(queue, addList)));
-						threads.add(new Thread(new Remover(queue, removeList)));
+						threads.add(new Thread(new Adder(barrier, queue, addList)));
+						threads.add(new Thread(new Remover(barrier, queue, removeList)));
 					}
 
 					long start = System.nanoTime();

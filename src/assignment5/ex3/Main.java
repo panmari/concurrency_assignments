@@ -1,6 +1,7 @@
 package assignment5.ex3;
 
 import java.util.ArrayList;
+import java.util.concurrent.CyclicBarrier;
 
 import assignment3.ex2.Dequeuer;
 import assignment3.ex2.Enqueuer;
@@ -20,17 +21,22 @@ public class Main {
 
 			System.out.println("#Threads: " + nThreads);
 			for (IIntQueue queue : queues) {
+				// Add some elements to queue, so no EmptyQueueException is thrown.
+				for (int i = 0; i < 10000; i++) {
+					queue.enq(i);
+				}
 				double duration = 0;
 				// Use first round for warmup.
 				for (int r = 0; r < nrRuns + 1; r++) {
 					ArrayList<Thread> threads = new ArrayList<Thread>(nThreads);
 
+					CyclicBarrier barrier = new CyclicBarrier(nThreads);
 					// Create enqueuers and dequeuers.
 					int workPerThread = 100000 / nThreads;
 					for (int i = 0; i < nThreads / 2; i++) {
-						Enqueuer enc = new Enqueuer(queue, workPerThread);
+						Enqueuer enc = new Enqueuer(barrier, queue, workPerThread);
 						threads.add(new Thread(enc));
-						Dequeuer deq = new Dequeuer(queue, workPerThread);
+						Dequeuer deq = new Dequeuer(barrier, queue, workPerThread);
 						threads.add(new Thread(deq));
 					}
 

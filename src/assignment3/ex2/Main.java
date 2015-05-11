@@ -1,6 +1,7 @@
 package assignment3.ex2;
 
 import java.util.ArrayList;
+import java.util.concurrent.CyclicBarrier;
 
 public class Main {
 
@@ -24,12 +25,12 @@ public class Main {
 				// Use first round for warmup.
 				for (int r = 0; r < nrRuns + 1; r++) {
 					ArrayList<Thread> threads = new ArrayList<Thread>(nThreads);
-
+					CyclicBarrier barrier = new CyclicBarrier(nThreads);
 					// Create enqueuers and dequeuers.
 					for (int i = 0; i < nThreads / 2; i++) {
-						Enqueuer enc = new Enqueuer(queue);
+						Enqueuer enc = new Enqueuer(barrier, queue);
 						threads.add(new Thread(enc));
-						Dequeuer deq = new Dequeuer(queue);
+						Dequeuer deq = new Dequeuer(barrier, queue);
 						threads.add(new Thread(deq));
 					}
 
