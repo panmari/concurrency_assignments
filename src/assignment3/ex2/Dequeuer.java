@@ -4,7 +4,8 @@ public class Dequeuer extends RunnableActor {
 
 	private IIntQueue queue;
 	
-	public Dequeuer(IIntQueue queue) {
+	public Dequeuer(IIntQueue queue, int nrElements) {
+		super(nrElements);
 		this.queue = queue;
 	}
 	

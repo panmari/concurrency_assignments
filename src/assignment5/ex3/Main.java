@@ -26,10 +26,11 @@ public class Main {
 					ArrayList<Thread> threads = new ArrayList<Thread>(nThreads);
 
 					// Create enqueuers and dequeuers.
+					int workPerThread = 100000 / nThreads;
 					for (int i = 0; i < nThreads / 2; i++) {
-						Enqueuer enc = new Enqueuer(queue);
+						Enqueuer enc = new Enqueuer(queue, workPerThread);
 						threads.add(new Thread(enc));
-						Dequeuer deq = new Dequeuer(queue);
+						Dequeuer deq = new Dequeuer(queue, workPerThread);
 						threads.add(new Thread(deq));
 					}
 

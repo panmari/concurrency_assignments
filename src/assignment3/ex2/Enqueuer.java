@@ -4,6 +4,10 @@ public class Enqueuer extends RunnableActor {
 
 	private IIntQueue queue;
 	
+	public Enqueuer(IIntQueue queue, int nrElements) {
+		super(nrElements);
+		this.queue = queue;
+	}
 	public Enqueuer(IIntQueue queue) {
 		this.queue = queue;
 	}
