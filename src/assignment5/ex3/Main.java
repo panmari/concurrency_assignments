@@ -22,7 +22,7 @@ public class Main {
 			System.out.println("#Threads: " + nThreads);
 			for (IIntQueue queue : queues) {
 				// Add some elements to queue, so no EmptyQueueException is thrown.
-				for (int i = 0; i < 10000; i++) {
+				for (int i = 0; i < 100000; i++) {
 					queue.enq(i);
 				}
 				double duration = 0;
@@ -30,9 +30,11 @@ public class Main {
 				for (int r = 0; r < nrRuns + 1; r++) {
 					ArrayList<Thread> threads = new ArrayList<Thread>(nThreads);
 
-					CyclicBarrier barrier = new CyclicBarrier(nThreads);
+					BarrierTimer timer = new BarrierTimer();
+					CyclicBarrier barrier = new CyclicBarrier(nThreads, timer);
 					// Create enqueuers and dequeuers.
 					int workPerThread = 100000 / nThreads;
+					
 					for (int i = 0; i < nThreads / 2; i++) {
 						Enqueuer enc = new Enqueuer(barrier, queue, workPerThread);
 						threads.add(new Thread(enc));
@@ -40,7 +42,6 @@ public class Main {
 						threads.add(new Thread(deq));
 					}
 
-					long start = System.nanoTime();
 					// Start threads
 					for (Thread t : threads) {
 						t.start();
@@ -50,10 +51,10 @@ public class Main {
 					for (Thread t : threads) {
 						t.join();
 					}
-					long end = System.nanoTime();
+					timer.stop();
 					// Skip first run, which ins only for warmup.
 					if (r > 0) {
-						duration += (end - start) / 1e6;
+						duration += timer.durationInMs();
 					}
 				}
 				// Print stats
